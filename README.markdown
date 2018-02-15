@@ -683,6 +683,8 @@ while i < attendeeList.count {
 
 When coding with conditionals, the left-hand margin of the code should be the "golden" or "happy" path. That is, don't nest `if` statements. Multiple return statements are OK. The `guard` statement is built for this.
 
+When using `guard` statements, keep the `else {` on the same line as the last condition
+
 **Preferred:**
 ```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
@@ -868,8 +870,27 @@ override func viewDidLoad() {
 
 
 
-## performScopedOpeartion
-## gentlePreconditionFailure
+## performScopedOperation
+
+## Catching Errors with `gentlePreconditionFailure`
+We use `gentlePreconditionFailure` to catch instances where the app reaches an unexpected state.
+
+In development or test builds (`DEBUG` and `ADHOC` configurations), `gentlePreconditionFailure` behaves like `preconditionFailure` and triggers a crash. 
+
+In a production build (`RELEASE` configuration), `gentlePreconditionFailure` will log that an unexpected state was encountered, but will not crash. If your app expects a returned value where the unexpected state was encountered, `gentlePreconditionFailure` also allows you to provide a fallback return value.
+
+```swift
+override public func tableView(_ tableView: UITableView,
+                                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    guard let colleague = colleagues[safe: indexPath.row] else {
+        return gentlePreconditionFailure() { return UITableViewCell() }
+    }
+
+    let cell = tableView.dequeueReusableCell(withIdentifier: ColleagueCell.reuseIdentifier()) as! ColleagueCell
+    cell.colleague = colleague
+    return cell
+}
+```
 
 ## References
 
