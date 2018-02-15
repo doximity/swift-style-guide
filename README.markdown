@@ -21,6 +21,8 @@ Our overarching goals are correctness, clarity, consistency, and brevity, in tha
 * [Access Control](#access-control)
 * [Control Flow](#control-flow)
 * [Guard Statements](#guard-statements)
+* [Thread Safety with `mt` Convention](#thread-safety-with-mt-convention)
+* [Catching Errors with `gentlePreconditionFailure`](#catching-errors-with-gentlePreconditionFailure)
 * [General Syntax](#general-syntax)
 
 ## Correctness
@@ -340,6 +342,100 @@ func reticulateSplines(spline: [Double],
                        translateConstant: Int,
                        comment: String) -> Bool {
     // reticulate code goes here
+}
+```
+
+
+### Method Organization
+When a single method encompasses a lot of functionality, it can get long and cluttered. A common case of this is when there is a ton of set up in `viewDidLoad`. 
+
+```swift
+override public func viewDidLoad() {
+    super.viewDidLoad()
+
+    updatesButton.layer.cornerRadius = 20.0
+    updatesButton.layer.masksToBounds = true
+    updatesButton.layer.shadowColor = UIColor.black.cgColor
+    updatesButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+
+    let dismissSwipe = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeUpdateView(_:)))
+    dismissSwipe.direction = .up
+    updatesAvailableButton.addGestureRecognizer(dismissSwipe)
+
+    tableView.addSubview(refreshControl)
+    tableView.rowHeight = UITableViewAutomaticDimension
+    tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frameWidth, height: 0.01))
+}
+```
+
+It makes sense to break logical chunks of the method into smaller pieces- there are a few ways to do approach this.
+
+#### Option 1: Break the logical chunks of code into helper methods inside of the same type
+
+This approach significantly cleans up the `viewDidLoad` call, making it very easy to understand and digest in pieces. However, it leaves the helper methods available for use within the scope of the whole view controller class. This may or may not be desirable.
+
+```swift
+override public func viewDidLoad() {
+    super.viewDidLoad()
+
+    setupUpdatesButton()
+    setupDismissGestureRecognizer()
+    setupTableView()
+}
+
+private func setupUpdatesButton() {
+    updatesButton.layer.cornerRadius = 20.0
+    updatesButton.layer.masksToBounds = true
+    updatesButton.layer.shadowColor = UIColor.black.cgColor
+    updatesButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+}
+
+private func setupDismissGestureRecognizer() {
+    let dismissSwipe = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeUpdateView(_:)))
+    dismissSwipe.direction = .up
+    updatesAvailableButton.addGestureRecognizer(dismissSwipe)
+}
+
+private func setupTableView() {
+    tableView.addSubview(refreshControl)
+    tableView.rowHeight = UITableViewAutomaticDimension
+    tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frameWidth, height: 0.01))
+}
+```
+
+#### Option 2: Use `performScopedOperation`
+
+This approach breaks up the code into into smaller pieces, and limits those chunks of code to being called from within the scope of the enclosing method.  
+
+`performScopedOperation` acts very similarly to nested functions: it can access variables previously defined outside of its brackets, and it can also define its own variables, which live only within the scope of its brackets. Unlike nested functions where you have to execute the function later in your code, `performScopedOperation` executes the block of code immediately.
+
+However, the result is still a long `viewDidLoad` method.
+
+```swift
+override public func viewDidLoad() {
+    super.viewDidLoad()
+
+    // setupUpdatesButton
+    performScopedOperation {
+        updatesButton.layer.cornerRadius = 20.0
+        updatesButton.layer.masksToBounds = true
+        updatesButton.layer.shadowColor = UIColor.black.cgColor
+        updatesButton.layer.shadowOffset = CGSize(width: 0, height: 2)
+    }
+
+    // setupDismissGestureRecognizer
+    performScopedOperation {
+        let dismissSwipe = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeUpdateView(_:)))
+        dismissSwipe.direction = .up
+        updatesAvailableButton.addGestureRecognizer(dismissSwipe)
+    }
+
+    // setupTableView
+    performScopedOperation {
+        tableView.addSubview(refreshControl)
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frameWidth, height: 0.01))
+    }
 }
 ```
 
@@ -754,33 +850,6 @@ if let number1 = number1 {
 
 Guard statements are required to exit in some way. Generally, this should be simple one line statement such as `return`, `throw`, `break`, `continue`, and `fatalError()`. Large code blocks should be avoided. If cleanup code is required for multiple exit points, consider using a `defer` block to avoid cleanup code duplication.
 
-
-## General Syntax
-### Parentheses
-
-Parentheses around conditionals are not required and should be omitted.
-
-**Preferred:**
-```swift
-if name == "Hello" {
-  print("World")
-}
-```
-
-**Not Preferred:**
-```swift
-if (name == "Hello") {
-  print("World")
-}
-```
-
-In larger expressions, optional parentheses can sometimes make code read more clearly.
-
-**Preferred:**
-```swift
-let playerMark = (player == current) ? "X" : "O"
-```
-
 ## Thread Safety Using `mt_` Hungarian Notation
 Operations that affect the UI should be run on the main thread. Failing to obey this rule results in undefined behavior and untraceable bugs. To mitigate this issue, we use the `mt_` (short for `main thread`) prefix to indicate that something must be accessed from the main thread.
 
@@ -868,12 +937,10 @@ override func viewDidLoad() {
 }
 ```
 
-
-
-## performScopedOperation
+Both options are supported, and it's up to the developer to weigh out the options.
 
 ## Catching Errors with `gentlePreconditionFailure`
-We use `gentlePreconditionFailure` to catch instances where the app reaches an unexpected state.
+Use `gentlePreconditionFailure` to catch instances where the app reaches an unexpected state.
 
 In development or test builds (`DEBUG` and `ADHOC` configurations), `gentlePreconditionFailure` behaves like `preconditionFailure` and triggers a crash. 
 
@@ -892,9 +959,33 @@ override public func tableView(_ tableView: UITableView,
 }
 ```
 
+## General Syntax
+### Parentheses
+
+Parentheses around conditionals are not required and should be omitted.
+
+**Preferred:**
+```swift
+if name == "Hello" {
+  print("World")
+}
+```
+
+**Not Preferred:**
+```swift
+if (name == "Hello") {
+  print("World")
+}
+```
+
+In larger expressions, optional parentheses can sometimes make code read more clearly.
+
+**Preferred:**
+```swift
+let playerMark = (player == current) ? "X" : "O"
+```
+
 ## References
 
 * [The Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
 * [The Swift Programming Language](https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/index.html)
-* [Using Swift with Cocoa and Objective-C](https://developer.apple.com/library/prerelease/ios/documentation/Swift/Conceptual/BuildingCocoaApps/index.html)
-* [Swift Standard Library Reference](https://developer.apple.com/library/prerelease/ios/documentation/General/Reference/SwiftStandardLibraryReference/index.html)
