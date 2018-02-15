@@ -21,8 +21,8 @@ Our overarching goals are correctness, clarity, consistency, and brevity, in tha
 * [Access Control](#access-control)
 * [Control Flow](#control-flow)
 * [Guard Statements](#guard-statements)
-* [Thread Safety with `mt` Convention](#thread-safety-with-mt-convention)
-* [Catching Errors with `gentlePreconditionFailure`](#catching-errors-with-gentlePreconditionFailure)
+* [Thread Safety with `mt` Convention](#thread-safety-using-mt_-hungarian-notation)
+* [Catching Errors with `gentlePreconditionFailure`](#catching-errors-with-gentlepreconditionfailure)
 * [General Syntax](#general-syntax)
 
 ## Correctness
@@ -989,3 +989,4 @@ let playerMark = (player == current) ? "X" : "O"
 
 * [The Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
 * [The Swift Programming Language](https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/index.html)
+* [Doximity Wiki on `_mt` Convention](https://wiki.doximity.com/articles/the-mt_-convention-hungarian-notation-for-thread-safe-code)
