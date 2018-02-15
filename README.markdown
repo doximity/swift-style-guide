@@ -948,7 +948,7 @@ In a production build (`RELEASE` configuration), `gentlePreconditionFailure` wil
 
 ```swift
 override public func tableView(_ tableView: UITableView,
-                                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+                               cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     guard let colleague = colleagues[safe: indexPath.row] else {
         return gentlePreconditionFailure() { return UITableViewCell() }
     }
