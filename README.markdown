@@ -439,6 +439,8 @@ override public func viewDidLoad() {
 }
 ```
 
+Both options are supported, and it’s up to the developer to weigh out the options.
+
 ### Functions vs Methods
 
 Free functions, which aren't attached to a class or type, should be used sparingly. When possible, prefer to use a method instead of a free function. This aids in readability and discoverability.
@@ -467,7 +469,7 @@ let value = max(x, y, z)  // another free function that feels natural
 
 Use trailing closure syntax only if there's a single closure expression parameter at the end of the argument list. Give the closure parameters descriptive names.
 
-For method calls with multiple closures, use a descriptive name for each closure parameter, and separate each closure parameter out onto a new line.
+For method calls with multiple closures, use a descriptive name for each closure parameter, and add a newline before each parameter name (including the first)
 
 **Preferred:**
 ```swift
@@ -475,12 +477,15 @@ UIView.animate(withDuration: 1.0) {
   self.myView.alpha = 0
 }
 
-UIView.animate(withDuration: 1.0, animations: {
-  self.myView.alpha = 0
-}, 
-completion: { finished in
-  self.myView.removeFromSuperview()
-})
+UIView.animate(
+  withDuration: 1.0,
+  animations: 
+    self.myView.alpha = 0
+  },
+  completion: { finished in
+    self.myView.removeFromSuperview()
+  }
+)
 ```
 
 **Not Preferred:**
@@ -557,9 +562,8 @@ let hypotenuse = side * root2 // what is root2?
 
 Declare variables and function return types as optional with `?` where a nil value is acceptable.
 
-Avoid using implicitly unwrapped optionals declared with `!`. There are a few exceptions to this:
-- `IBOutlet`s are guaranteed to be initialized before use
-- Prototype entities loaded by Interface Builder (e.g., objects returned by `dequeueReusableCellWithIdentifier`) 
+**Avoid using implicitly unwrapped optionals declared with `!`**
+They should be used as little as possible! One exception to this is for `IBOutlet`s, which are guaranteed to be initialized before use
 
 When accessing an optional value, use optional chaining if there are many optionals in the chain:
 
@@ -702,16 +706,16 @@ Code should not create reference cycles. Analyze your object graph and prevent s
 
 ### Extending Object Lifetime
 
-Extend object lifetime using the `[weak self]` and `guard let strongSelf = self else { return }` idiom. `[weak self]` is preferred to `[unowned self]` where it is not immediately obvious that `self` outlives the closure. Explicitly extending lifetime is preferred to optional unwrapping.
+Extend object lifetime using the `[weak self]` and `guard let 'self' = self else { return }` idiom. `[weak self]` is preferred to `[unowned self]` where it is not immediately obvious that `self` outlives the closure. Explicitly extending lifetime is preferred to optional unwrapping.
 
 **Preferred**
 ```swift
 resource.request().onComplete { [weak self] response in
-  guard let strongSelf = self else {
+  guard let 'self' = self else {
     return
   }
-  let model = strongSelf.updateModel(response)
-  strongSelf.updateUI(model)
+  let model = self.updateModel(response)
+  self.updateUI(model)
 }
 ```
 
@@ -859,7 +863,7 @@ For more details, read our [wiki article](https://wiki.doximity.com/articles/the
 There are 3 ways in which an `mt_` operation may be carried out:
 
 1. An `mt_` operation can be directly called by any `mt_` function
-2. An `mt` operation can be directly called by another function that is guaranteed to run on the main thread, such as `viewDidLoad` or an `IBAction` like `didTapExitButton`
+2. An `mt` operation can be directly called by another function that is guaranteed to run on the main thread. Examples of functions that are guaranteed to run on the main thread are lifecycle functions like `viewDidLoad`, and `IBAction`s, which should be named accordingly: e.g., `mt_didTapExitButton`
 3. An `mt` operation can be called from a non-`mt` function, as long as you wrap it in a main-thread dispatch closure.
 
 ### Functions
@@ -914,7 +918,7 @@ var mtSet_currentUser: User? {
 ```
 
 ### Closures
-If a closure must be **called** on the main thread, use `mtCall_` as the prefix.
+If a closure must be **called** on the main thread, use `mtCall_` as the prefix. For `mtCall_` closures, always use named parameters instead of using trailing closure syntax.
 
 ```swift
 func checkUserStatus(mtCall_success: () -> ()) {
@@ -937,8 +941,6 @@ override func viewDidLoad() {
 }
 ```
 
-Both options are supported, and it's up to the developer to weigh out the options.
-
 ## Catching Errors with `gentlePreconditionFailure`
 Use `gentlePreconditionFailure` to catch instances where the app reaches an unexpected state.
 
@@ -949,11 +951,11 @@ In a production build (`RELEASE` configuration), `gentlePreconditionFailure` wil
 ```swift
 override public func tableView(_ tableView: UITableView,
                                cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    guard let colleague = colleagues[safe: indexPath.row] else {
+    guard let colleague = colleagues[safe: indexPath.row],
+          let cell = tableView.dequeueReusableCell(withIdentifier: ColleagueCell.reuseIdentifier()) as? ColleagueCell else {
         return gentlePreconditionFailure() { return UITableViewCell() }
     }
 
-    let cell = tableView.dequeueReusableCell(withIdentifier: ColleagueCell.reuseIdentifier()) as! ColleagueCell
     cell.colleague = colleague
     return cell
 }
