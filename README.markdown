@@ -467,9 +467,9 @@ let value = max(x, y, z)  // another free function that feels natural
 
 ## Closure Expressions
 
-Use trailing closure syntax only if there's a single closure expression parameter at the end of the argument list. Give the closure parameters descriptive names.
+Use trailing closure syntax only if there's a single closure expression parameter at the end of the argument list. Otherwise, use a descriptive name for each closure parameter.
 
-For method calls with multiple closures, use a descriptive name for each closure parameter, and add a newline before each parameter name (including the first)
+For method calls where closure arguments are specified by name (rather than using trailing closure syntax), add a newline before each parameter name (including the first)
 
 **Preferred:**
 ```swift
@@ -735,6 +735,20 @@ resource.request().onComplete { [weak self] response in
   let model = self?.updateModel(response)
   self?.updateUI(model)
 }
+```
+
+### IBOutlets
+
+IBOutlets should always be `strong`
+
+**Preferred**
+```swift
+@IBOutlet var notificationsView: UIView!
+```
+
+**Not Preferred**
+```swift
+@IBOutlet weak var notificationsView: UIView!
 ```
 
 ## Access Control
