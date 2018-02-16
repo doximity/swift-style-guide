@@ -234,10 +234,15 @@ However you may want to use a class in certain instances. Use a class if:
 
 ### Example definition
 
-Here's an example of a well-styled class definition:
+Here's an example of a well-styled struct definition:
 
 ```swift
-class Circle: Shape {
+protocol Shape {
+    func area() -> Double
+    func perimeter() -> Double
+}
+
+struct Circle {
   var x: Int
   var y: Int
   var radius: Double
@@ -249,26 +254,33 @@ class Circle: Shape {
       radius = newValue / 2
     }
   }
-
+  
   init(x: Int, y: Int, radius: Double) {
     self.x = x
     self.y = y
     self.radius = radius
   }
-
-  convenience init(x: Int, y: Int, diameter: Double) {
+  
+  init(x: Int, y: Int, diameter: Double) {
     self.init(x: x, y: y, radius: diameter / 2)
   }
+}
 
-  override func area() -> Double {
+extension Circle: Shape {
+  func area() -> Double {
     return Double.pi * radius * radius
+  }
+  
+  func perimeter() -> Double {
+    return 2 * Double.pi * radius
   }
 }
 
 extension Circle: CustomStringConvertible {
   var description: String {
-    return "center = \(centerString) area = \(area())"
+    return "center = \(centerString), area = \(area()), perimeter = \(perimeter())"
   }
+  
   private var centerString: String {
     return "(\(x),\(y))"
   }
@@ -276,11 +288,12 @@ extension Circle: CustomStringConvertible {
 ```
 
 The example above demonstrates the following style guidelines:
-
+ + Use a struct instead of a class because a Circle doesn't have identity
+ + Use a protocol for `Shape` to specify expected functionality of shapes, such as `area` and `perimeter`. Using a base class `Shape` wouldnt make sense, because there would be no meaningful `area` or `perimeter` for just an abstract `Shape`
  + Specify types for properties, variables, constants, argument declarations and other statements with a space after the colon but not before, e.g. `x: Int`, and `Circle: Shape`.
  + Indent getter and setter definitions and property observers.
  + Don't add modifiers such as `internal` when they're already the default. Similarly, don't repeat the access modifier when overriding a method.
- + Organize extra functionality (e.g. printing) in extensions.
+ + Organize extra functionality (e.g., `Shape` protocol conformance, printing) in extensions.
  + Hide non-shared, implementation details such as `centerString` inside the extension using `private` access control.
 
 ### Use of Self
