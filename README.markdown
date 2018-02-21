@@ -337,8 +337,9 @@ final class Box<T> {
 }
 ```
 
-## Function Declarations
+## Functions
 
+### Function Spacing
 Keep short function declarations on one line including the opening brace:
 
 ```swift
@@ -358,6 +359,14 @@ func reticulateSplines(spline: [Double],
 }
 ```
 
+Use the same rule when calling functions with many parameters. If the function call doesn't fit on one line, add a newline between each parameter.
+
+```swift
+let john = Person(fullName: "John Doe",
+                  gender: .male,
+                  location: "San Francisco, CA",
+                  occupation: .doctor)
+```
 
 ### Method Organization
 When a single method encompasses a lot of functionality, it can get long and cluttered. A common case of this is when there is a ton of set up in `viewDidLoad`. 
