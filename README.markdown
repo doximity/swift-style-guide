@@ -300,8 +300,20 @@ The example above demonstrates the following style guidelines:
 
 For conciseness and to prevent non-obvious retain cycles, avoid using `self` since Swift does not require it to access an object's properties or invoke its methods.
 
-Use self only when required by the compiler (in `@escaping` closures, or in initializers to disambiguate properties from arguments). In other words, if it compiles without `self` then omit it.
+Use self only when required by the compiler (in `@escaping` closures, or in initializers to disambiguate properties from arguments). In other words, if it compiles without `self` then omit it. When the compiler forces you to use `self` inside of closures, please look at the [Memory Management](https://github.com/doximity/swift-style-guide#memory-management) section of this guide to see how to use `self` safely.
 
+Example of using `self` inside of an initializer 👌:
+```swift
+class Book {
+  let title: String
+  let author: String
+    
+  init(title: String, author: String) {
+      self.title = title 
+      self.author = author
+  }
+}
+```
 
 ### Computed Properties
 
