@@ -1,4 +1,4 @@
-## Engineering Best Practices.
+## Engineering Best Practices
 
 The following is a collection of team adopted best practices. Upon agreement, feel free to submit a PR with updates.
 
