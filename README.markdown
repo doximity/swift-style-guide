@@ -909,22 +909,22 @@ When at all possible, avoid using the `default` clause in `switch` statements, i
 **Preferred:**
 ```swift
 switch someDirection {
-    case west:
-        print("Go west, young man!")
-    case north,
-        south, 
-        east: 
-        print("Go somehere else!")
+case west:
+    print("Go west, young man!")
+case north,
+     south,
+     east:
+    print("Go somehere else!")
 }
 ```
 
 **Not Preferred**
 ```swift
 switch someDirection {
-    case west:
-        print("Go west, young man!")
-    default:
-        print("Go somewhere else")
+case west:
+    print("Go west, young man!")
+default:
+    print("Go somewhere else")
 }
 
 ```
@@ -934,17 +934,17 @@ A more complex exmaple may illustrate the rationale more clearly. Take the case 
 ```swift
 public static func == (lhs: Direction, rhs: Direction) -> Bool {
     switch (lhs, rhs) {
-        case (.north, .north),
-            (.west, .west),
-            (.south, .south),
-            (.east, .east):
-            return true
-            
-        case (.north, _),
-            (.west, _),
-            (.south, _),
-            (.east, _):
-            return false
+    case (.north, .north),
+         (.west, .west),
+         (.south, .south),
+         (.east, .east):
+        return true
+
+    case (.north, _),
+         (.west, _),
+         (.south, _),
+         (.east, _):
+        return false
     }
 }
 ```
