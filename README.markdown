@@ -949,6 +949,8 @@ public static func == (lhs: Direction, rhs: Direction) -> Bool {
 }
 ```
 
+Were we to add a new cases for in between directions (e.g. `northEast`) and we relied on the `default` clause to inform us of the non-equal state, then `northEast == south` which isn't true, and neither would the compiler inform us of this condition.
+
 
 ## Thread Safety Using `mt_` Hungarian Notation
 Operations that affect the UI should be run on the main thread. Failing to obey this rule results in undefined behavior and untraceable bugs. To mitigate this issue, we use the `mt_` (short for `main thread`) prefix to indicate that something must be accessed from the main thread.
