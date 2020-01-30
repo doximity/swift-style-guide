@@ -904,7 +904,7 @@ Guard statements are required to exit in some way. Generally, this should be sim
 
 ### Switch Statements
 
-When at all possible, avoid using the `default` clause in `switch` statements, instead prefer to explicitly enumerate the unexpected conditions. The rationale being if a new `case` is added, for example, an `enum`, we want the compiler to generate an error informing us of the unhandled case. If we used a `default` clause, the new case would fall through to that clause and that default action may not be how that case should be handled.
+When at all possible, avoid using the `default` clause in `switch` statements, instead prefer to explicitly enumerate the unexpected conditions. This is especially true with `enum` data types. The rationale being if a new `case` is added to an `enum`, we want the compiler to generate an error informing us of the unhandled case. If we used a `default` clause, the new case would fall through to that clause and that default action may not be how that case should be handled.
 
 **Preferred:**
 ```swift
@@ -950,6 +950,8 @@ public static func == (lhs: Direction, rhs: Direction) -> Bool {
 ```
 
 Were we to add a new cases for in between directions (e.g. `northEast`) and we relied on the `default` clause to inform us of the non-equal state, then `northEast == south` which isn't true, and neither would the compiler inform us of this condition.
+
+Using the `default` clause may be acceptable when switching over other data types.
 
 
 ## Thread Safety Using `mt_` Hungarian Notation
