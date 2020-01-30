@@ -902,6 +902,54 @@ if let number1 = number1 {
 
 Guard statements are required to exit in some way. Generally, this should be simple one line statement such as `return`, `throw`, `break`, `continue`, and `fatalError()`. Large code blocks should be avoided. If cleanup code is required for multiple exit points, consider using a `defer` block to avoid cleanup code duplication.
 
+### Switch Statements
+
+When at all possible, avoid using the `default` clause in `switch` statements, instead prefer to explicitly enumerate the unexpected conditions. The rationale being if a new `case` is added, for example, an `enum`, we want the compiler to generate an error informing us of the unhandled case. If we used a `default` clause, the new case would fall through to that clause and that default action may not be how that case should be handled.
+
+**Preferred:**
+```swift
+switch someDirection {
+    case west:
+        print("Go west, young man!")
+    case north,
+        south, 
+        east: 
+        print("Go somehere else!")
+}
+```
+
+**Not Preferred**
+```swift
+switch someDirection {
+    case west:
+        print("Go west, young man!")
+    default:
+        print("Go somewhere else")
+}
+
+```
+
+A more complex exmaple may illustrate the rationale more clearly. Take the case of conforming to `Equatable`:
+
+```swift
+public static func == (lhs: Direction, rhs: Direction) -> Bool {
+    switch (lhs, rhs) {
+        case (.north, .north),
+            (.west, .west),
+            (.south, .south),
+            (.east, .east):
+            return true
+            
+        case (.north, _),
+            (.west, _),
+            (.south, _),
+            (.east, _):
+            return false
+    }
+}
+```
+
+
 ## Thread Safety Using `mt_` Hungarian Notation
 Operations that affect the UI should be run on the main thread. Failing to obey this rule results in undefined behavior and untraceable bugs. To mitigate this issue, we use the `mt_` (short for `main thread`) prefix to indicate that something must be accessed from the main thread.
 
