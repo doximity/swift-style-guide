@@ -49,6 +49,15 @@ Descriptive and consistent naming makes software easier to read and understand. 
   - protocols that describe _a capability_ should end in _-able_ or _-ible_ (e.g., `Equatable`)
 - take advantage of default parameters in your methods
 
+### VM Properties
+
+All exposed properties of a VM should have a prefix that indicates the direction of flow for that property:
+
+* `in_` for inputs to the VM. The flow is VC -> VM
+* `out_` for outputs from the vm. The flow is VM -> VC
+* `bi_` for inouts (for example, text fields that the VC needs to send to the VM bu the VM might also want to clear or modify as well). The flow is VM <-> VC
+* `analytics_` for analytics related objects
+
 
 ### Delegates
 
