@@ -16,6 +16,7 @@ Our overarching goals are correctness, clarity, consistency, and brevity, in tha
 * [Classes and Structures](#classes-and-structures)
 * [Function Declarations](#function-declarations)
 * [Closure Expressions](#closure-expressions)
+* [Void Inputs in Closures](#void-inputs-in-closures)
 * [Types](#types)
 * [Memory Management](#memory-management)
 * [Access Control](#access-control)
@@ -553,6 +554,26 @@ let value = numbers
   .map {$0 * 2}
   .filter {$0 > 50}
   .map {$0 + 10}
+```
+
+## Void Inputs in Closures
+When a closure takes an input of Type `Void` (which often happens when the input type is defined in a generic context, and happens to be specified as `Void`), the only thing it can do with it is ignore it (since a `Void` instance conveys no information).
+
+However when a change that causes the closure's input type to *no longer* be `Void` is made elsewhere in the codebase, we  want to explicitly reconsider the closure's behavior, since the value-ignoring should no longer be automatic.
+
+To achieve this, we need to explicilty specify the ignored instance's type.
+
+**Preferred:**
+```swift
+thingToObserve.onValueDelivered { (_: Void) in ... }
+```
+
+**Not Preferred:**
+```swift
+thingToObserve.onValueDelivered { _ in ... }
+
+// This variant used to achieve the same result in an earlier version of Swift, but no longer does:
+thingToObserve.onValueDelivered { Void in ... } 
 ```
 
 ## Types
