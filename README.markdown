@@ -385,9 +385,7 @@ override public func viewDidLoad() {
 }
 ```
 
-It makes sense to break logical chunks of the method into smaller pieces- there are a few ways to do approach this.
-
-#### Option 1: Break the logical chunks of code into helper methods inside of the same type
+#### Preferred approach: Break the logical chunks of code into helper methods inside of the same type
 
 This approach significantly cleans up the `viewDidLoad` call, making it very easy to understand and digest in pieces. However, it leaves the helper methods available for use within the scope of the whole view controller class. This may or may not be desirable.
 
@@ -420,43 +418,7 @@ private func setupTableView() {
 }
 ```
 
-#### Option 2: Use `performScopedOperation`
-
-This approach breaks up the code into into smaller pieces, and limits those chunks of code to being called from within the scope of the enclosing method.  
-
-`performScopedOperation` acts very similarly to nested functions: it can access variables previously defined outside of its brackets, and it can also define its own variables, which live only within the scope of its brackets. Unlike nested functions where you have to execute the function later in your code, `performScopedOperation` executes the block of code immediately.
-
-However, the result is still a long `viewDidLoad` method.
-
-```swift
-override public func viewDidLoad() {
-    super.viewDidLoad()
-
-    // setupUpdatesButton
-    performScopedOperation {
-        updatesButton.layer.cornerRadius = 20.0
-        updatesButton.layer.masksToBounds = true
-        updatesButton.layer.shadowColor = UIColor.black.cgColor
-        updatesButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-    }
-
-    // setupDismissGestureRecognizer
-    performScopedOperation {
-        let dismissSwipe = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeUpdateView(_:)))
-        dismissSwipe.direction = .up
-        updatesAvailableButton.addGestureRecognizer(dismissSwipe)
-    }
-
-    // setupTableView
-    performScopedOperation {
-        tableView.addSubview(refreshControl)
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frameWidth, height: 0.01))
-    }
-}
-```
-
-Both options are supported, and it’s up to the developer to weigh out the options.
+Where appropriate a helper `var`, especially `lazy var`, is also a great way to break out composition of the object.
 
 ### Functions vs Methods
 
