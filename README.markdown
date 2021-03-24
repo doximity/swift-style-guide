@@ -849,7 +849,7 @@ Guard statements are required to exit in some way. Generally, this should be sim
 
 ### Switch Statements
 
-When at all possible, avoid using the `default` clause in `switch` statements, instead prefer to explicitly enumerate the unexpected conditions. This is especially true with `enum` data types. The rationale being if a new `case` is added to an `enum`, we want the compiler to generate an error informing us of the unhandled case. If we used a `default` clause, the new case would fall through to that clause and that default action may not be how that case should be handled.
+When at all possible, avoid using the `default` clause in `switch` statements, instead prefer to explicitly enumerate the unexpected conditions. This is especially true with `enum` data types. The rationale being if a new `case` is added to an `enum`, we want the compiler to generate an error informing us of the unhandled case. If we used a `default` clause, the new case would fall through to that clause and that default action may not be how that case should be handled. Reasonable exceptions include test-only code where handling many cases outside of the test at hand will never execute and add little value. Use in application code should have a comment explaining why so the next developer can decide if more explicit handling becomes warranted.
 
 **Preferred:**
 ```swift
