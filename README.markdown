@@ -343,13 +343,15 @@ func reticulateSplines(spline: [Double]) -> Bool {
 }
 ```
 
-For functions with long signatures, add line breaks after each parameter. This helps with readability and decreases the need for line wrap.
+For functions with long signatures, add line breaks before the first and after each parameter. This helps with readability and decreases the need for line wrap.
 
 ```swift
-func reticulateSplines(spline: [Double],
-                       adjustmentFactor: Double,
-                       translateConstant: Int,
-                       comment: String) -> Bool {
+func reticulateSplines(
+  spline: [Double],
+  adjustmentFactor: Double,
+  translateConstant: Int,
+  comment: String
+) -> Bool {
     // reticulate code goes here
 }
 ```
@@ -357,10 +359,12 @@ func reticulateSplines(spline: [Double],
 Use the same rule when calling functions with many parameters. If the function call doesn't fit on one line, add a newline between each parameter.
 
 ```swift
-let john = Person(fullName: "John Doe",
-                  gender: .male,
-                  location: "San Francisco, CA",
-                  occupation: .doctor)
+let john = Person(
+  fullName: "John Doe",
+  gender: .male,
+  location: "San Francisco, CA",
+  occupation: .doctor
+)
 ```
 
 ### Method Organization
