@@ -770,7 +770,7 @@ IBOutlets should be `strong` and `private` when appropriate
 
 Using `private` and `fileprivate` appropriately, however, adds clarity and promotes encapsulation. Prefer `private` to `fileprivate` when possible. Using extensions may require you to use `fileprivate`.
 
-Only explicitly use `open`, `public`, and `internal` when you require a full access control specification. 
+Only explicitly use `open`, `public`, and `internal` when you require a full access control specification. Only include at the access level actually needed as these are expensive lookups across the project, especially when added to common `UIKit` and `Foundation` base types.
 
 Use access control as the leading property specifier. The only things that should come before access control are the `static` specifier or attributes such as `@IBAction`, `@IBOutlet` and `@discardableResult`.
 
