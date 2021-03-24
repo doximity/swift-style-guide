@@ -177,8 +177,6 @@ class TestDatabase : Database {
 
 When they are needed, use inline comments to explain **why** a particular piece of code does something. Comments must be kept up-to-date or deleted.
 
-Avoid block comments inline with code, as the code should be as self-documenting as possible.
-
 For documenting methods and properties, use the auto-generated template (`opt` + `cmd` + `/`) to describe expected parameters and return values.
 
 ```swift
