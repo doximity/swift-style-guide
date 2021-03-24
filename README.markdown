@@ -608,7 +608,7 @@ private func makeLocationManager() -> CLLocationManager {
 
 ### Type Inference
 
-Prefer compact code and let the compiler infer the type for constants or variables of single instances. Type inference is also appropriate for small (non-empty) arrays and dictionaries. When required, specify the specific type such as `CGFloat` or `Int16`.
+Prefer compact code and let the compiler infer the type for constants or variables of single instances when expressions are simple. For more complex expressions, types can make the code more readable and faster to compile. If it's hard to immediately understand what type an expression is using or returns it's probably worth including some types. If any type inference time warnings appear it's also necessary to add more types. This is especially common in heavily chained reactive expressions. Type inference is also appropriate for small (non-empty) arrays and dictionaries. When required, specify the specific type such as `CGFloat` or `Int16`.
 
 **Preferred:**
 ```swift
