@@ -41,7 +41,6 @@ Descriptive and consistent naming makes software easier to read and understand. 
 - use camel case (not snake case)
 - use uppercase for types and protocols, lowercase for everything else
 - name functions and parameters based on role, not on type
-- strive to name functions in a way that reads like a sentence
 - name methods for their side effects
   - methods with side effects should start with a verb
   - methods with no side effects should start with a noun
@@ -49,32 +48,6 @@ Descriptive and consistent naming makes software easier to read and understand. 
   - protocols that describe _what something is_ should read as nouns (e.g., `Collection`)
   - protocols that describe _a capability_ should end in _-able_ or _-ible_ (e.g., `Equatable`)
 - take advantage of default parameters in your methods
-
-### VM Properties
-
-All exposed properties of a VM should have a prefix that indicates the direction of flow for that property:
-
-* `in_` for inputs to the VM. The flow is VC -> VM
-* `out_` for outputs from the vm. The flow is VM -> VC
-* `bi_` for inouts (for example, text fields that the VC needs to send to the VM bu the VM might also want to clear or modify as well). The flow is VM <-> VC
-* `analytics_` for analytics related objects
-
-
-### Delegates
-
-When creating custom delegate methods, an unnamed first parameter should be the delegate source. UIKit contains numerous examples of this.
-
-**Preferred:**
-```swift
-func namePickerView(_ namePickerView: NamePickerView, didSelectName name: String)
-func namePickerViewShouldReload(_ namePickerView: NamePickerView) -> Bool
-```
-
-**Not Preferred:**
-```swift
-func didSelectName(namePicker: NamePickerViewController, name: String)
-func namePickerShouldReload() -> Bool
-```
 
 ### Generics
 
@@ -97,7 +70,7 @@ func swap<Thing>(_ a: inout Thing, _ b: inout Thing)
 ## Code Organization
 ### Extensions
 
-Use extensions to organize your code into logical blocks of functionality. 
+Use extensions to organize your code into logical blocks of functionality.
 
 Extensions can live in the same file, or can be broken out into a separate file. As a general rule of thumb, if the extension is long and provides a larger set of functionality, we should move it to a new file.
 
@@ -212,7 +185,7 @@ For documenting methods and properties, use the auto-generated template (`opt` +
 struct Point {
         var x = 0.0
         var y = 0.0
-        
+
         /// Update the caller's position. This function is mutating, so it actually changes the Point's properties.
         ///
         /// - Parameters:
@@ -229,7 +202,7 @@ struct Point {
 
 ### Which one to use?
 
-Remember, structs have [value semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_144). Classes have [reference semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_145). 
+Remember, structs have [value semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_144). Classes have [reference semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_145).
 
 Structs are generally safer.
 - Structs are always copied, so you don't need to worry about a separate thread mutating your object unexpectedly
@@ -264,13 +237,13 @@ struct Circle {
       radius = newValue / 2
     }
   }
-  
+
   init(x: Int, y: Int, radius: Double) {
     self.x = x
     self.y = y
     self.radius = radius
   }
-  
+
   init(x: Int, y: Int, diameter: Double) {
     self.init(x: x, y: y, radius: diameter / 2)
   }
@@ -280,7 +253,7 @@ extension Circle: Shape {
   func area() -> Double {
     return Double.pi * radius * radius
   }
-  
+
   func perimeter() -> Double {
     return 2 * Double.pi * radius
   }
@@ -290,7 +263,7 @@ extension Circle: CustomStringConvertible {
   var description: String {
     return "center = \(centerString), area = \(area()), perimeter = \(perimeter())"
   }
-  
+
   private var centerString: String {
     return "(\(x),\(y))"
   }
@@ -317,9 +290,9 @@ Example of using `self` inside of an initializer 👌:
 class Book {
   let title: String
   let author: String
-    
+
   init(title: String, author: String) {
-      self.title = title 
+      self.title = title
       self.author = author
   }
 }
@@ -391,7 +364,7 @@ let john = Person(fullName: "John Doe",
 ```
 
 ### Method Organization
-When a single method encompasses a lot of functionality, it can get long and cluttered. A common case of this is when there is a ton of set up in `viewDidLoad`. 
+When a single method encompasses a lot of functionality, it can get long and cluttered. A common case of this is when there is a ton of set up in `viewDidLoad`.
 
 ```swift
 override public func viewDidLoad() {
@@ -511,8 +484,6 @@ let value = max(x, y, z)  // another free function that feels natural
 
 ## Closure Expressions
 
-Use trailing closure syntax only if there's a single closure expression parameter at the end of the argument list. Otherwise, use a descriptive name for each closure parameter.
-
 For method calls where closure arguments are specified by name (rather than using trailing closure syntax), add a newline before each parameter name (including the first)
 
 **Preferred:**
@@ -554,26 +525,6 @@ let value = numbers
   .map {$0 * 2}
   .filter {$0 > 50}
   .map {$0 + 10}
-```
-
-## Void Inputs in Closures
-When a closure takes an input of Type `Void` (which often happens when the input type is defined in a generic context, and happens to be specified as `Void`), the only thing it can do with it is ignore it (since a `Void` instance conveys no information).
-
-However when a change that causes the closure's input type to *no longer* be `Void` is made elsewhere in the codebase, we  want to explicitly reconsider the closure's behavior, since the value-ignoring should no longer be automatic.
-
-To achieve this, we need to explicilty specify the ignored instance's type.
-
-**Preferred:**
-```swift
-thingToObserve.onValueDelivered { (_: Void) in ... }
-```
-
-**Not Preferred:**
-```swift
-thingToObserve.onValueDelivered { _ in ... }
-
-// This variant used to achieve the same result in an earlier version of Swift, but no longer does:
-thingToObserve.onValueDelivered { Void in ... } 
 ```
 
 ## Types
@@ -803,7 +754,7 @@ resource.request().onComplete { [weak self] response in
 
 ### IBOutlets
 
-IBOutlets should always be `strong`
+IBOutlets should be `strong` and `private` when appropriate
 
 **Preferred**
 ```swift
@@ -819,7 +770,7 @@ IBOutlets should always be `strong`
 
 Using `private` and `fileprivate` appropriately, however, adds clarity and promotes encapsulation. Prefer `private` to `fileprivate` when possible. Using extensions may require you to use `fileprivate`.
 
-Only explicitly use `open`, `public`, and `internal` when you require a full access control specification.
+Only explicitly use `open`, `public`, and `internal` when you require a full access control specification. 
 
 Use access control as the leading property specifier. The only things that should come before access control are the `static` specifier or attributes such as `@IBAction`, `@IBOutlet` and `@discardableResult`.
 
@@ -1023,7 +974,7 @@ func updateCurrentUser(notification: Notification) {
 
       // Since `updateCurrentUser` is not guaranteed to be called on the main thread,
       // We must dispatch onto the main thread before calling `mt_` functions.
-      DispatchQueue.main.async{ 
+      DispatchQueue.main.async{
          mtSet_currentUser = newCurrentUser
          mt_presentNewUserFetchedAlert()
       }
@@ -1038,7 +989,7 @@ Properties can be both read and written to, which are 2 separate operations.
 - If a property must be **read and set** on the main thread, use `mt_` as the prefix.
 
 In the example below, since this is the `didSet` of an `mtSet` variable, we are guaranteed to be on the main thread. Therefore, we can directly call `mt_` functions.
-     
+
 ```swift
 var mtSet_currentUser: User? {
    didSet {
@@ -1055,7 +1006,7 @@ func checkUserStatus(mtCall_success: () -> ()) {
   // We are not inside of a `mt` function
   // But the `mtCall_success` name indicates the closure must be called on the main thread
   // So we must call the closure inside of a main-thread dispatch.
-  
+
   DispatchQueue.main.async{ mtCall_success() }
 }
 
@@ -1074,7 +1025,7 @@ override func viewDidLoad() {
 ## Catching Errors with `gentlePreconditionFailure`
 Use `gentlePreconditionFailure` to catch instances where the app reaches an unexpected state.
 
-In development or test builds (`DEBUG` and `ADHOC` configurations), `gentlePreconditionFailure` behaves like `preconditionFailure` and triggers a crash. 
+In development or test builds (`DEBUG` and `ADHOC` configurations), `gentlePreconditionFailure` behaves like `preconditionFailure` and triggers a crash.
 
 In a production build (`RELEASE` configuration), `gentlePreconditionFailure` will log that an unexpected state was encountered, but will not crash. If your app expects a returned value where the unexpected state was encountered, `gentlePreconditionFailure` also allows you to provide a fallback return value.
 
