@@ -86,7 +86,7 @@ In particular, when adding protocol conformance to a model, prefer adding a sepa
 **Preferred:**
 ```swift
 class MyViewController: UIViewController {
-  // class stuff here
+    // class stuff here
 }
 
 // MARK: - UITableViewDataSource
@@ -96,14 +96,14 @@ extension MyViewController: UITableViewDataSource {
 
 // MARK: - UIScrollViewDelegate
 extension MyViewController: UIScrollViewDelegate {
-  // scroll view delegate methods
+    // scroll view delegate methods
 }
 ```
 
 **Not Preferred:**
 ```swift
 class MyViewController: UIViewController, UITableViewDataSource, UIScrollViewDelegate {
-  // all methods
+    // all methods
 }
 ```
 
@@ -125,9 +125,9 @@ Tip: You can re-indent by selecting some code (or `⌘A` to select all) and then
 **Preferred:**
 ```swift
 if user.isHappy {
-  // Do something
+    // Do something
 } else {
-  // Do something else
+    // Do something else
 }
 ```
 
@@ -135,10 +135,10 @@ if user.isHappy {
 ```swift
 if user.isHappy
 {
-  // Do something
+    // Do something
 }
 else {
-  // Do something else
+    // Do something else
 }
 ```
 
@@ -157,14 +157,14 @@ Colons always have no space on the left and one space on the right. Exceptions a
 **Preferred:**
 ```swift
 class TestDatabase: Database {
-  var data: [String: CGFloat] = ["A": 1.2, "B": 3.2]
+    var data: [String: CGFloat] = ["A": 1.2, "B": 3.2]
 }
 ```
 
 **Not Preferred:**
 ```swift
 class TestDatabase : Database {
-  var data :[String:CGFloat] = ["A" : 1.2, "B":3.2]
+    var data :[String:CGFloat] = ["A" : 1.2, "B":3.2]
 }
 ```
 
@@ -248,23 +248,23 @@ struct Circle {
 }
 
 extension Circle: Shape {
-  func area() -> Double {
-    return Double.pi * radius * radius
-  }
+    func area() -> Double {
+        return Double.pi * radius * radius
+    }
 
-  func perimeter() -> Double {
-    return 2 * Double.pi * radius
-  }
+    func perimeter() -> Double {
+        return 2 * Double.pi * radius
+    }
 }
 
 extension Circle: CustomStringConvertible {
-  var description: String {
-    return "center = \(centerString), area = \(area()), perimeter = \(perimeter())"
-  }
+    var description: String {
+        return "center = \(centerString), area = \(area()), perimeter = \(perimeter())"
+    }
 
-  private var centerString: String {
-    return "(\(x),\(y))"
-  }
+    private var centerString: String {
+        return "(\(x),\(y))"
+    }
 }
 ```
 
@@ -286,13 +286,13 @@ Use self only when required by the compiler (in `@escaping` closures, or in init
 Example of using `self` inside of an initializer 👌:
 ```swift
 class Book {
-  let title: String
-  let author: String
+    let title: String
+    let author: String
 
-  init(title: String, author: String) {
-      self.title = title
-      self.author = author
-  }
+    init(title: String, author: String) {
+        self.title = title
+        self.author = author
+    }
 }
 ```
 
@@ -303,16 +303,16 @@ For conciseness, if a computed property is read-only, omit the get clause. The g
 **Preferred:**
 ```swift
 var diameter: Double {
-  return radius * 2
+    return radius * 2
 }
 ```
 
 **Not Preferred:**
 ```swift
 var diameter: Double {
-  get {
-    return radius * 2
-  }
+    get {
+        return radius * 2
+    }
 }
 ```
 
@@ -323,10 +323,10 @@ Use of `final` can clarify your intent. In the below example, `Box` has a partic
 ```swift
 // Turn any generic type into a reference type using this Box class.
 final class Box<T> {
-  let value: T
-  init(_ value: T) {
-    self.value = value
-  }
+    let value: T
+    init(_ value: T) {
+        self.value = value
+    }
 }
 ```
 
@@ -337,7 +337,7 @@ Keep short function declarations on one line including the opening brace:
 
 ```swift
 func reticulateSplines(spline: [Double]) -> Bool {
-  // reticulate code goes here
+    // reticulate code goes here
 }
 ```
 
@@ -345,10 +345,10 @@ For functions with long signatures, add line breaks before the first and after e
 
 ```swift
 func reticulateSplines(
-  spline: [Double],
-  adjustmentFactor: Double,
-  translateConstant: Int,
-  comment: String
+    spline: [Double],
+    adjustmentFactor: Double,
+    translateConstant: Int,
+    comment: String
 ) -> Bool {
     // reticulate code goes here
 }
@@ -357,11 +357,11 @@ func reticulateSplines(
 Use the same rule when calling functions with many parameters. If the function call doesn't fit on one line, add a newline between each parameter.
 
 ```swift
-let john = Person(
-  fullName: "John Doe",
-  gender: .male,
-  location: "San Francisco, CA",
-  occupation: .doctor
+    let john = Person(
+    fullName: "John Doe",
+    gender: .male,
+    location: "San Francisco, CA",
+    occupation: .doctor
 )
 ```
 
@@ -453,30 +453,30 @@ For method calls where closure arguments are specified by name (rather than usin
 **Preferred:**
 ```swift
 UIView.animate(withDuration: 1.0) {
-  self.myView.alpha = 0
+    self.myView.alpha = 0
 }
 
 UIView.animate(
-  withDuration: 1.0,
-  animations: {
-    self.myView.alpha = 0
-  },
-  completion: { finished in
-    self.myView.removeFromSuperview()
-  }
+    withDuration: 1.0,
+    animations: {
+        self.myView.alpha = 0
+    },
+    completion: { finished in
+        self.myView.removeFromSuperview()
+    }
 )
 ```
 
 **Not Preferred:**
 ```swift
 UIView.animate(withDuration: 1.0, animations: {
-  self.myView.alpha = 0
+    self.myView.alpha = 0
 })
 
 UIView.animate(withDuration: 1.0, animations: {
   self.myView.alpha = 0
 }) { f in
-  self.myView.removeFromSuperview()
+    self.myView.removeFromSuperview()
 }
 ```
 
@@ -486,9 +486,9 @@ Chained methods using trailing closures should be clear and easy to read in cont
 let value = numbers.map { $0 * 2 }.filter { $0 % 3 == 0 }.index(of: 90)
 
 let value = numbers
-  .map {$0 * 2}
-  .filter {$0 > 50}
-  .map {$0 + 10}
+    .map {$0 * 2}
+    .filter {$0 > 50}
+    .map {$0 + 10}
 ```
 
 ## Types
@@ -520,8 +520,8 @@ You can define constants on a type rather than on an instance of that type using
 **Preferred:**
 ```swift
 enum Math {
-  static let e = 2.718281828459045235360287
-  static let root2 = 1.41421356237309504880168872
+    static let e = 2.718281828459045235360287
+    static let root2 = 1.41421356237309504880168872
 }
 
 let hypotenuse = side * Math.root2
@@ -554,7 +554,7 @@ Use optional binding when it's more convenient to unwrap once and perform multip
 
 ```swift
 if let textContainer = self.textContainer {
-  // do many things with textContainer
+    // do many things with textContainer
 }
 ```
 
@@ -579,9 +579,9 @@ var optionalSubview: UIView?
 var volume: Double?
 
 if let unwrappedSubview = optionalSubview {
-  if let realVolume = volume {
-    // do something with unwrappedSubview and realVolume
-  }
+    if let realVolume = volume {
+        // do something with unwrappedSubview and realVolume
+    }
 }
 ```
 
@@ -593,11 +593,11 @@ Consider using lazy initialization for finer grain control over object lifetime.
 lazy var locationManager: CLLocationManager = self.makeLocationManager()
 
 private func makeLocationManager() -> CLLocationManager {
-  let manager = CLLocationManager()
-  manager.desiredAccuracy = kCLLocationAccuracyBest
-  manager.delegate = self
-  manager.requestAlwaysAuthorization()
-  return manager
+    let manager = CLLocationManager()
+    manager.desiredAccuracy = kCLLocationAccuracyBest
+    manager.delegate = self
+    manager.requestAlwaysAuthorization()
+    return manager
 }
 ```
 
@@ -690,11 +690,11 @@ Extend object lifetime using the `[weak self]` and `guard let 'self' = self else
 **Preferred**
 ```swift
 resource.request().onComplete { [weak self] response in
-  guard let 'self' = self else {
-    return
-  }
-  let model = self.updateModel(response)
-  self.updateUI(model)
+    guard let 'self' = self else {
+        return
+    }
+    let model = self.updateModel(response)
+    self.updateUI(model)
 }
 ```
 
@@ -702,8 +702,8 @@ resource.request().onComplete { [weak self] response in
 ```swift
 // might crash if self is released before response returns
 resource.request().onComplete { [unowned self] response in
-  let model = self.updateModel(response)
-  self.updateUI(model)
+    let model = self.updateModel(response)
+    self.updateUI(model)
 }
 ```
 
@@ -711,8 +711,8 @@ resource.request().onComplete { [unowned self] response in
 ```swift
 // deallocate could happen between updating the model and updating UI
 resource.request().onComplete { [weak self] response in
-  let model = self?.updateModel(response)
-  self?.updateUI(model)
+    let model = self?.updateModel(response)
+    self?.updateUI(model)
 }
 ```
 
@@ -746,11 +746,11 @@ Prefer the `for-in` style of `for` loop over the `while-condition-increment` sty
 **Preferred:**
 ```swift
 for _ in 0..<3 {
-  print("Hello three times")
+    print("Hello three times")
 }
 
 for (index, person) in attendeeList.enumerated() {
-  print("\(person) is at position #\(index)")
+    print("\(person) is at position #\(index)")
 }
 ```
 
@@ -758,15 +758,15 @@ for (index, person) in attendeeList.enumerated() {
 ```swift
 var i = 0
 while i < 3 {
-  print("Hello three times")
-  i += 1
+    print("Hello three times")
+    i += 1
 }
 
 var i = 0
 while i < attendeeList.count {
-  let person = attendeeList[i]
-  print("\(person) is at position #\(i)")
-  i += 1
+    let person = attendeeList[i]
+    print("\(person) is at position #\(i)")
+    i += 1
 }
 ```
 
@@ -782,15 +782,15 @@ When using `guard` statements, keep the `else {` on the same line as the last co
 ```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
 
-  guard let context = context else {
-    throw FFTError.noContext
-  }
-  guard let inputData = inputData else {
-    throw FFTError.noInputData
-  }
+    guard let context = context else {
+        throw FFTError.noContext
+    }
+    guard let inputData = inputData else {
+        throw FFTError.noInputData
+    }
 
-  // use context and input to compute the frequencies
-  return frequencies
+    // use context and input to compute the frequencies
+    return frequencies
 }
 ```
 
@@ -798,17 +798,17 @@ func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies 
 ```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
 
-  if let context = context {
-    if let inputData = inputData {
-      // use context and input to compute the frequencies
+    if let context = context {
+        if let inputData = inputData {
+            // use context and input to compute the frequencies
 
-      return frequencies
+            return frequencies
+        } else {
+            throw FFTError.noInputData
+        }
     } else {
-      throw FFTError.noInputData
+        throw FFTError.noContext
     }
-  } else {
-    throw FFTError.noContext
-  }
 }
 ```
 
@@ -821,7 +821,7 @@ When multiple optionals are unwrapped either with `guard` or `if let`, minimize 
 guard let number1 = number1,
       let number2 = number2,
       let number3 = number3 else {
-  fatalError("impossible")
+    fatalError("impossible")
 }
 // do something with numbers
 ```
@@ -829,17 +829,17 @@ guard let number1 = number1,
 **Not Preferred:**
 ```swift
 if let number1 = number1 {
-  if let number2 = number2 {
-    if let number3 = number3 {
-      // do something with numbers
+    if let number2 = number2 {
+        if let number3 = number3 {
+            // do something with numbers
+        } else {
+            fatalError("impossible")
+        }
     } else {
-      fatalError("impossible")
+        fatalError("impossible")
     }
-  } else {
-    fatalError("impossible")
-  }
 } else {
-  fatalError("impossible")
+    fatalError("impossible")
 }
 ```
 
@@ -859,7 +859,7 @@ case west:
 case north,
      south,
      east:
-    print("Go somehere else!")
+    print("Go somewhere else!")
 }
 ```
 
@@ -956,9 +956,9 @@ In the example below, since this is the `didSet` of an `mtSet` variable, we are 
 
 ```swift
 var mtSet_currentUser: User? {
-   didSet {
-      mt_updateUIBasedOnCurrentUser()
-   }
+    didSet {
+        mt_updateUIBasedOnCurrentUser()
+    }
 }
 ```
 
@@ -967,11 +967,11 @@ If a closure must be **called** on the main thread, use `mtCall_` as the prefix.
 
 ```swift
 func checkUserStatus(mtCall_success: () -> ()) {
-  // We are not inside of a `mt` function
-  // But the `mtCall_success` name indicates the closure must be called on the main thread
-  // So we must call the closure inside of a main-thread dispatch.
+    // We are not inside of a `mt` function
+    // But the `mtCall_success` name indicates the closure must be called on the main thread
+    // So we must call the closure inside of a main-thread dispatch.
 
-  DispatchQueue.main.async{ mtCall_success() }
+    DispatchQueue.main.async{ mtCall_success() }
 }
 
 override func viewDidLoad() {
@@ -1014,14 +1014,14 @@ Parentheses around conditionals are not required and should be omitted.
 **Preferred:**
 ```swift
 if name == "Hello" {
-  print("World")
+    print("World")
 }
 ```
 
 **Not Preferred:**
 ```swift
 if (name == "Hello") {
-  print("World")
+    print("World")
 }
 ```
 
