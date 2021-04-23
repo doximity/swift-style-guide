@@ -22,7 +22,6 @@ Our overarching goals are correctness, clarity, consistency, and brevity, in tha
 * [Access Control](#access-control)
 * [Control Flow](#control-flow)
 * [Guard Statements](#guard-statements)
-* [Thread Safety with `mt` Convention](#thread-safety-using-mt_-hungarian-notation)
 * [Catching Errors with `gentlePreconditionFailure`](#catching-errors-with-gentlepreconditionfailure)
 * [General Syntax](#general-syntax)
 
@@ -874,7 +873,7 @@ default:
 
 ```
 
-A more complex exmaple may illustrate the rationale more clearly. Take the case of conforming to `Equatable`:
+A more complex example may illustrate the rationale more clearly. Take the case of conforming to `Equatable`:
 
 ```swift
 public static func == (lhs: Direction, rhs: Direction) -> Bool {
@@ -898,93 +897,6 @@ Were we to add a new cases for in between directions (e.g. `northEast`) and we r
 
 Using the `default` clause may be acceptable when switching over other data types.
 
-
-## Thread Safety Using `mt_` Hungarian Notation
-Operations that affect the UI should be run on the main thread. Failing to obey this rule results in undefined behavior and untraceable bugs. To mitigate this issue, we use the `mt_` (short for `main thread`) prefix to indicate that something must be accessed from the main thread.
-
-For more details, read our [wiki article](https://wiki.doximity.com/articles/the-mt_-convention-hungarian-notation-for-thread-safe-code) on the `mt_` convention.
-
-### Overview
-There are 3 ways in which an `mt_` operation may be carried out:
-
-1. An `mt_` operation can be directly called by any `mt_` function
-2. An `mt` operation can be directly called by another function that is guaranteed to run on the main thread. Examples of functions that are guaranteed to run on the main thread are lifecycle functions like `viewDidLoad`, and `IBAction`s, which should be named accordingly: e.g., `mt_didTapExitButton`
-3. An `mt` operation can be called from a non-`mt` function, as long as you wrap it in a main-thread dispatch closure.
-
-### Functions
-A function which must be executed on the main thread must begin with the prefix `mt_`.
-
-```swift
-override func viewDidLoad() {
-   super.viewDidLoad()
-
-   // `viewDidLoad` is guaranteed to run on the main thread
-   // So we can call `mt_updateUIBasedOnCurrentUser` directly
-   mt_updateUIBasedOnCurrentUser()
-}
-
-func mt_presentNewUserFetchedAlert() {
-   // We must name this method with `mt` because UI work takes place inside of it
-
-   let alert = UIAlertController(title: "New User Fetched!",
-                                 message: nil,
-                                 preferredStyle: UIAlertControllerStyle.alert)
-
-   presentViewController(alert, animated: true)
-}
-
-func updateCurrentUser(notification: Notification) {
-   if let newCurrentUser = notification.payload as? User {
-
-      // Since `updateCurrentUser` is not guaranteed to be called on the main thread,
-      // We must dispatch onto the main thread before calling `mt_` functions.
-      DispatchQueue.main.async{
-         mtSet_currentUser = newCurrentUser
-         mt_presentNewUserFetchedAlert()
-      }
-   }
-}
-```
-
-### Properties
-Properties can be both read and written to, which are 2 separate operations.
-- If a property must be **read** on the main thread, use `mtGet_` as the prefix.
-- If a property must be **set** on the main thread, use `mtSet_` as the prefix.
-- If a property must be **read and set** on the main thread, use `mt_` as the prefix.
-
-In the example below, since this is the `didSet` of an `mtSet` variable, we are guaranteed to be on the main thread. Therefore, we can directly call `mt_` functions.
-
-```swift
-var mtSet_currentUser: User? {
-    didSet {
-        mt_updateUIBasedOnCurrentUser()
-    }
-}
-```
-
-### Closures
-If a closure must be **called** on the main thread, use `mtCall_` as the prefix. For `mtCall_` closures, always use named parameters instead of using trailing closure syntax.
-
-```swift
-func checkUserStatus(mtCall_success: () -> ()) {
-    // We are not inside of a `mt` function
-    // But the `mtCall_success` name indicates the closure must be called on the main thread
-    // So we must call the closure inside of a main-thread dispatch.
-
-    DispatchQueue.main.async{ mtCall_success() }
-}
-
-override func viewDidLoad() {
-   super.viewDidLoad()
-
-   checkUserStatus(
-     mtCall_success: { // <- Don't use trailing-closure syntax
-                       // <- Instead, explicitly name the argument with `mt`
-         someLabel.text = "user status successfully set"
-     }
-   )
-}
-```
 
 ## Catching Errors with `gentlePreconditionFailure`
 Use `gentlePreconditionFailure` to catch instances where the app reaches an unexpected state.
@@ -1036,4 +948,3 @@ let playerMark = (player == current) ? "X" : "O"
 
 * [The Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
 * [The Swift Programming Language](https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/index.html)
-* [Doximity Wiki on `_mt` Convention](https://wiki.doximity.com/articles/the-mt_-convention-hungarian-notation-for-thread-safe-code)
