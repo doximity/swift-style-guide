@@ -356,7 +356,7 @@ func reticulateSplines(
 Use the same rule when calling functions with many parameters. If the function call doesn't fit on one line, add a newline between each parameter.
 
 ```swift
-    let john = Person(
+let john = Person(
     fullName: "John Doe",
     gender: .male,
     location: "San Francisco, CA",
