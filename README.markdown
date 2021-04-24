@@ -22,7 +22,6 @@ Our overarching goals are correctness, clarity, consistency, and brevity, in tha
 * [Access Control](#access-control)
 * [Control Flow](#control-flow)
 * [Guard Statements](#guard-statements)
-* [Thread Safety with `mt` Convention](#thread-safety-using-mt_-hungarian-notation)
 * [Catching Errors with `gentlePreconditionFailure`](#catching-errors-with-gentlepreconditionfailure)
 * [General Syntax](#general-syntax)
 
@@ -41,7 +40,6 @@ Descriptive and consistent naming makes software easier to read and understand. 
 - use camel case (not snake case)
 - use uppercase for types and protocols, lowercase for everything else
 - name functions and parameters based on role, not on type
-- strive to name functions in a way that reads like a sentence
 - name methods for their side effects
   - methods with side effects should start with a verb
   - methods with no side effects should start with a noun
@@ -49,32 +47,6 @@ Descriptive and consistent naming makes software easier to read and understand. 
   - protocols that describe _what something is_ should read as nouns (e.g., `Collection`)
   - protocols that describe _a capability_ should end in _-able_ or _-ible_ (e.g., `Equatable`)
 - take advantage of default parameters in your methods
-
-### VM Properties
-
-All exposed properties of a VM should have a prefix that indicates the direction of flow for that property:
-
-* `in_` for inputs to the VM. The flow is VC -> VM
-* `out_` for outputs from the vm. The flow is VM -> VC
-* `bi_` for inouts (for example, text fields that the VC needs to send to the VM bu the VM might also want to clear or modify as well). The flow is VM <-> VC
-* `analytics_` for analytics related objects
-
-
-### Delegates
-
-When creating custom delegate methods, an unnamed first parameter should be the delegate source. UIKit contains numerous examples of this.
-
-**Preferred:**
-```swift
-func namePickerView(_ namePickerView: NamePickerView, didSelectName name: String)
-func namePickerViewShouldReload(_ namePickerView: NamePickerView) -> Bool
-```
-
-**Not Preferred:**
-```swift
-func didSelectName(namePicker: NamePickerViewController, name: String)
-func namePickerShouldReload() -> Bool
-```
 
 ### Generics
 
@@ -97,7 +69,7 @@ func swap<Thing>(_ a: inout Thing, _ b: inout Thing)
 ## Code Organization
 ### Extensions
 
-Use extensions to organize your code into logical blocks of functionality. 
+Use extensions to organize your code into logical blocks of functionality.
 
 Extensions can live in the same file, or can be broken out into a separate file. As a general rule of thumb, if the extension is long and provides a larger set of functionality, we should move it to a new file.
 
@@ -113,7 +85,7 @@ In particular, when adding protocol conformance to a model, prefer adding a sepa
 **Preferred:**
 ```swift
 class MyViewController: UIViewController {
-  // class stuff here
+    // class stuff here
 }
 
 // MARK: - UITableViewDataSource
@@ -123,14 +95,14 @@ extension MyViewController: UITableViewDataSource {
 
 // MARK: - UIScrollViewDelegate
 extension MyViewController: UIScrollViewDelegate {
-  // scroll view delegate methods
+    // scroll view delegate methods
 }
 ```
 
 **Not Preferred:**
 ```swift
 class MyViewController: UIViewController, UITableViewDataSource, UIScrollViewDelegate {
-  // all methods
+    // all methods
 }
 ```
 
@@ -152,9 +124,9 @@ Tip: You can re-indent by selecting some code (or `⌘A` to select all) and then
 **Preferred:**
 ```swift
 if user.isHappy {
-  // Do something
+    // Do something
 } else {
-  // Do something else
+    // Do something else
 }
 ```
 
@@ -162,10 +134,10 @@ if user.isHappy {
 ```swift
 if user.isHappy
 {
-  // Do something
+    // Do something
 }
 else {
-  // Do something else
+    // Do something else
 }
 ```
 
@@ -184,14 +156,14 @@ Colons always have no space on the left and one space on the right. Exceptions a
 **Preferred:**
 ```swift
 class TestDatabase: Database {
-  var data: [String: CGFloat] = ["A": 1.2, "B": 3.2]
+    var data: [String: CGFloat] = ["A": 1.2, "B": 3.2]
 }
 ```
 
 **Not Preferred:**
 ```swift
 class TestDatabase : Database {
-  var data :[String:CGFloat] = ["A" : 1.2, "B":3.2]
+    var data :[String:CGFloat] = ["A" : 1.2, "B":3.2]
 }
 ```
 
@@ -204,15 +176,13 @@ class TestDatabase : Database {
 
 When they are needed, use inline comments to explain **why** a particular piece of code does something. Comments must be kept up-to-date or deleted.
 
-Avoid block comments inline with code, as the code should be as self-documenting as possible.
-
 For documenting methods and properties, use the auto-generated template (`opt` + `cmd` + `/`) to describe expected parameters and return values.
 
 ```swift
 struct Point {
         var x = 0.0
         var y = 0.0
-        
+
         /// Update the caller's position. This function is mutating, so it actually changes the Point's properties.
         ///
         /// - Parameters:
@@ -229,7 +199,7 @@ struct Point {
 
 ### Which one to use?
 
-Remember, structs have [value semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_144). Classes have [reference semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_145). 
+Remember, structs have [value semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_144). Classes have [reference semantics](https://developer.apple.com/library/mac/documentation/Swift/Conceptual/Swift_Programming_Language/ClassesAndStructures.html#//apple_ref/doc/uid/TP40014097-CH13-XID_145).
 
 Structs are generally safer.
 - Structs are always copied, so you don't need to worry about a separate thread mutating your object unexpectedly
@@ -264,36 +234,36 @@ struct Circle {
       radius = newValue / 2
     }
   }
-  
+
   init(x: Int, y: Int, radius: Double) {
     self.x = x
     self.y = y
     self.radius = radius
   }
-  
+
   init(x: Int, y: Int, diameter: Double) {
     self.init(x: x, y: y, radius: diameter / 2)
   }
 }
 
 extension Circle: Shape {
-  func area() -> Double {
-    return Double.pi * radius * radius
-  }
-  
-  func perimeter() -> Double {
-    return 2 * Double.pi * radius
-  }
+    func area() -> Double {
+        return Double.pi * radius * radius
+    }
+
+    func perimeter() -> Double {
+        return 2 * Double.pi * radius
+    }
 }
 
 extension Circle: CustomStringConvertible {
-  var description: String {
-    return "center = \(centerString), area = \(area()), perimeter = \(perimeter())"
-  }
-  
-  private var centerString: String {
-    return "(\(x),\(y))"
-  }
+    var description: String {
+        return "center = \(centerString), area = \(area()), perimeter = \(perimeter())"
+    }
+
+    private var centerString: String {
+        return "(\(x),\(y))"
+    }
 }
 ```
 
@@ -315,13 +285,13 @@ Use self only when required by the compiler (in `@escaping` closures, or in init
 Example of using `self` inside of an initializer 👌:
 ```swift
 class Book {
-  let title: String
-  let author: String
-    
-  init(title: String, author: String) {
-      self.title = title 
-      self.author = author
-  }
+    let title: String
+    let author: String
+
+    init(title: String, author: String) {
+        self.title = title
+        self.author = author
+    }
 }
 ```
 
@@ -332,16 +302,16 @@ For conciseness, if a computed property is read-only, omit the get clause. The g
 **Preferred:**
 ```swift
 var diameter: Double {
-  return radius * 2
+    return radius * 2
 }
 ```
 
 **Not Preferred:**
 ```swift
 var diameter: Double {
-  get {
-    return radius * 2
-  }
+    get {
+        return radius * 2
+    }
 }
 ```
 
@@ -352,10 +322,10 @@ Use of `final` can clarify your intent. In the below example, `Box` has a partic
 ```swift
 // Turn any generic type into a reference type using this Box class.
 final class Box<T> {
-  let value: T
-  init(_ value: T) {
-    self.value = value
-  }
+    let value: T
+    init(_ value: T) {
+        self.value = value
+    }
 }
 ```
 
@@ -366,17 +336,19 @@ Keep short function declarations on one line including the opening brace:
 
 ```swift
 func reticulateSplines(spline: [Double]) -> Bool {
-  // reticulate code goes here
+    // reticulate code goes here
 }
 ```
 
-For functions with long signatures, add line breaks after each parameter. This helps with readability and decreases the need for line wrap.
+For functions with long signatures, add line breaks before the first and after each parameter. This helps with readability and decreases the need for line wrap.
 
 ```swift
-func reticulateSplines(spline: [Double],
-                       adjustmentFactor: Double,
-                       translateConstant: Int,
-                       comment: String) -> Bool {
+func reticulateSplines(
+    spline: [Double],
+    adjustmentFactor: Double,
+    translateConstant: Int,
+    comment: String
+) -> Bool {
     // reticulate code goes here
 }
 ```
@@ -384,14 +356,16 @@ func reticulateSplines(spline: [Double],
 Use the same rule when calling functions with many parameters. If the function call doesn't fit on one line, add a newline between each parameter.
 
 ```swift
-let john = Person(fullName: "John Doe",
-                  gender: .male,
-                  location: "San Francisco, CA",
-                  occupation: .doctor)
+let john = Person(
+    fullName: "John Doe",
+    gender: .male,
+    location: "San Francisco, CA",
+    occupation: .doctor
+)
 ```
 
 ### Method Organization
-When a single method encompasses a lot of functionality, it can get long and cluttered. A common case of this is when there is a ton of set up in `viewDidLoad`. 
+When a single method encompasses a lot of functionality, it can get long and cluttered. A common case of this is when there is a ton of set up in `viewDidLoad`.
 
 ```swift
 override public func viewDidLoad() {
@@ -412,9 +386,7 @@ override public func viewDidLoad() {
 }
 ```
 
-It makes sense to break logical chunks of the method into smaller pieces- there are a few ways to do approach this.
-
-#### Option 1: Break the logical chunks of code into helper methods inside of the same type
+#### Preferred approach: Break the logical chunks of code into helper methods inside of the same type
 
 This approach significantly cleans up the `viewDidLoad` call, making it very easy to understand and digest in pieces. However, it leaves the helper methods available for use within the scope of the whole view controller class. This may or may not be desirable.
 
@@ -447,43 +419,7 @@ private func setupTableView() {
 }
 ```
 
-#### Option 2: Use `performScopedOperation`
-
-This approach breaks up the code into into smaller pieces, and limits those chunks of code to being called from within the scope of the enclosing method.  
-
-`performScopedOperation` acts very similarly to nested functions: it can access variables previously defined outside of its brackets, and it can also define its own variables, which live only within the scope of its brackets. Unlike nested functions where you have to execute the function later in your code, `performScopedOperation` executes the block of code immediately.
-
-However, the result is still a long `viewDidLoad` method.
-
-```swift
-override public func viewDidLoad() {
-    super.viewDidLoad()
-
-    // setupUpdatesButton
-    performScopedOperation {
-        updatesButton.layer.cornerRadius = 20.0
-        updatesButton.layer.masksToBounds = true
-        updatesButton.layer.shadowColor = UIColor.black.cgColor
-        updatesButton.layer.shadowOffset = CGSize(width: 0, height: 2)
-    }
-
-    // setupDismissGestureRecognizer
-    performScopedOperation {
-        let dismissSwipe = UISwipeGestureRecognizer(target: self, action: #selector(didSwipeUpdateView(_:)))
-        dismissSwipe.direction = .up
-        updatesAvailableButton.addGestureRecognizer(dismissSwipe)
-    }
-
-    // setupTableView
-    performScopedOperation {
-        tableView.addSubview(refreshControl)
-        tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.tableHeaderView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frameWidth, height: 0.01))
-    }
-}
-```
-
-Both options are supported, and it’s up to the developer to weigh out the options.
+Where appropriate a helper `var`, especially `lazy var`, is also a great way to break out composition of the object.
 
 ### Functions vs Methods
 
@@ -511,37 +447,35 @@ let value = max(x, y, z)  // another free function that feels natural
 
 ## Closure Expressions
 
-Use trailing closure syntax only if there's a single closure expression parameter at the end of the argument list. Otherwise, use a descriptive name for each closure parameter.
-
 For method calls where closure arguments are specified by name (rather than using trailing closure syntax), add a newline before each parameter name (including the first)
 
 **Preferred:**
 ```swift
 UIView.animate(withDuration: 1.0) {
-  self.myView.alpha = 0
+    self.myView.alpha = 0
 }
 
 UIView.animate(
-  withDuration: 1.0,
-  animations: {
-    self.myView.alpha = 0
-  },
-  completion: { finished in
-    self.myView.removeFromSuperview()
-  }
+    withDuration: 1.0,
+    animations: {
+        self.myView.alpha = 0
+    },
+    completion: { finished in
+        self.myView.removeFromSuperview()
+    }
 )
 ```
 
 **Not Preferred:**
 ```swift
 UIView.animate(withDuration: 1.0, animations: {
-  self.myView.alpha = 0
+    self.myView.alpha = 0
 })
 
 UIView.animate(withDuration: 1.0, animations: {
   self.myView.alpha = 0
 }) { f in
-  self.myView.removeFromSuperview()
+    self.myView.removeFromSuperview()
 }
 ```
 
@@ -551,29 +485,9 @@ Chained methods using trailing closures should be clear and easy to read in cont
 let value = numbers.map { $0 * 2 }.filter { $0 % 3 == 0 }.index(of: 90)
 
 let value = numbers
-  .map {$0 * 2}
-  .filter {$0 > 50}
-  .map {$0 + 10}
-```
-
-## Void Inputs in Closures
-When a closure takes an input of Type `Void` (which often happens when the input type is defined in a generic context, and happens to be specified as `Void`), the only thing it can do with it is ignore it (since a `Void` instance conveys no information).
-
-However when a change that causes the closure's input type to *no longer* be `Void` is made elsewhere in the codebase, we  want to explicitly reconsider the closure's behavior, since the value-ignoring should no longer be automatic.
-
-To achieve this, we need to explicilty specify the ignored instance's type.
-
-**Preferred:**
-```swift
-thingToObserve.onValueDelivered { (_: Void) in ... }
-```
-
-**Not Preferred:**
-```swift
-thingToObserve.onValueDelivered { _ in ... }
-
-// This variant used to achieve the same result in an earlier version of Swift, but no longer does:
-thingToObserve.onValueDelivered { Void in ... } 
+    .map {$0 * 2}
+    .filter {$0 > 50}
+    .map {$0 + 10}
 ```
 
 ## Types
@@ -605,8 +519,8 @@ You can define constants on a type rather than on an instance of that type using
 **Preferred:**
 ```swift
 enum Math {
-  static let e = 2.718281828459045235360287
-  static let root2 = 1.41421356237309504880168872
+    static let e = 2.718281828459045235360287
+    static let root2 = 1.41421356237309504880168872
 }
 
 let hypotenuse = side * Math.root2
@@ -639,7 +553,7 @@ Use optional binding when it's more convenient to unwrap once and perform multip
 
 ```swift
 if let textContainer = self.textContainer {
-  // do many things with textContainer
+    // do many things with textContainer
 }
 ```
 
@@ -664,9 +578,9 @@ var optionalSubview: UIView?
 var volume: Double?
 
 if let unwrappedSubview = optionalSubview {
-  if let realVolume = volume {
-    // do something with unwrappedSubview and realVolume
-  }
+    if let realVolume = volume {
+        // do something with unwrappedSubview and realVolume
+    }
 }
 ```
 
@@ -678,11 +592,11 @@ Consider using lazy initialization for finer grain control over object lifetime.
 lazy var locationManager: CLLocationManager = self.makeLocationManager()
 
 private func makeLocationManager() -> CLLocationManager {
-  let manager = CLLocationManager()
-  manager.desiredAccuracy = kCLLocationAccuracyBest
-  manager.delegate = self
-  manager.requestAlwaysAuthorization()
-  return manager
+    let manager = CLLocationManager()
+    manager.desiredAccuracy = kCLLocationAccuracyBest
+    manager.delegate = self
+    manager.requestAlwaysAuthorization()
+    return manager
 }
 ```
 
@@ -693,7 +607,7 @@ private func makeLocationManager() -> CLLocationManager {
 
 ### Type Inference
 
-Prefer compact code and let the compiler infer the type for constants or variables of single instances. Type inference is also appropriate for small (non-empty) arrays and dictionaries. When required, specify the specific type such as `CGFloat` or `Int16`.
+Prefer compact code and let the compiler infer the type for constants or variables of single instances when expressions are simple. For more complex expressions, types can make the code more readable and faster to compile. If it's hard to immediately understand what type an expression is using or returns it's probably worth including some types. If any type inference time warnings appear it's also necessary to add more types. This is especially common in heavily chained reactive expressions. Type inference is also appropriate for small (non-empty) arrays and dictionaries. When required, specify the specific type such as `CGFloat` or `Int16`.
 
 **Preferred:**
 ```swift
@@ -775,11 +689,11 @@ Extend object lifetime using the `[weak self]` and `guard let 'self' = self else
 **Preferred**
 ```swift
 resource.request().onComplete { [weak self] response in
-  guard let 'self' = self else {
-    return
-  }
-  let model = self.updateModel(response)
-  self.updateUI(model)
+    guard let 'self' = self else {
+        return
+    }
+    let model = self.updateModel(response)
+    self.updateUI(model)
 }
 ```
 
@@ -787,8 +701,8 @@ resource.request().onComplete { [weak self] response in
 ```swift
 // might crash if self is released before response returns
 resource.request().onComplete { [unowned self] response in
-  let model = self.updateModel(response)
-  self.updateUI(model)
+    let model = self.updateModel(response)
+    self.updateUI(model)
 }
 ```
 
@@ -796,14 +710,14 @@ resource.request().onComplete { [unowned self] response in
 ```swift
 // deallocate could happen between updating the model and updating UI
 resource.request().onComplete { [weak self] response in
-  let model = self?.updateModel(response)
-  self?.updateUI(model)
+    let model = self?.updateModel(response)
+    self?.updateUI(model)
 }
 ```
 
 ### IBOutlets
 
-IBOutlets should always be `strong`
+IBOutlets should be `strong` and `private` when appropriate
 
 **Preferred**
 ```swift
@@ -819,7 +733,7 @@ IBOutlets should always be `strong`
 
 Using `private` and `fileprivate` appropriately, however, adds clarity and promotes encapsulation. Prefer `private` to `fileprivate` when possible. Using extensions may require you to use `fileprivate`.
 
-Only explicitly use `open`, `public`, and `internal` when you require a full access control specification.
+Only explicitly use `open`, `public`, and `internal` when you require a full access control specification. Only include at the access level actually needed as these are expensive lookups across the project, especially when added to common `UIKit` and `Foundation` base types.
 
 Use access control as the leading property specifier. The only things that should come before access control are the `static` specifier or attributes such as `@IBAction`, `@IBOutlet` and `@discardableResult`.
 
@@ -831,11 +745,11 @@ Prefer the `for-in` style of `for` loop over the `while-condition-increment` sty
 **Preferred:**
 ```swift
 for _ in 0..<3 {
-  print("Hello three times")
+    print("Hello three times")
 }
 
 for (index, person) in attendeeList.enumerated() {
-  print("\(person) is at position #\(index)")
+    print("\(person) is at position #\(index)")
 }
 ```
 
@@ -843,15 +757,15 @@ for (index, person) in attendeeList.enumerated() {
 ```swift
 var i = 0
 while i < 3 {
-  print("Hello three times")
-  i += 1
+    print("Hello three times")
+    i += 1
 }
 
 var i = 0
 while i < attendeeList.count {
-  let person = attendeeList[i]
-  print("\(person) is at position #\(i)")
-  i += 1
+    let person = attendeeList[i]
+    print("\(person) is at position #\(i)")
+    i += 1
 }
 ```
 
@@ -867,15 +781,15 @@ When using `guard` statements, keep the `else {` on the same line as the last co
 ```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
 
-  guard let context = context else {
-    throw FFTError.noContext
-  }
-  guard let inputData = inputData else {
-    throw FFTError.noInputData
-  }
+    guard let context = context else {
+        throw FFTError.noContext
+    }
+    guard let inputData = inputData else {
+        throw FFTError.noInputData
+    }
 
-  // use context and input to compute the frequencies
-  return frequencies
+    // use context and input to compute the frequencies
+    return frequencies
 }
 ```
 
@@ -883,17 +797,17 @@ func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies 
 ```swift
 func computeFFT(context: Context?, inputData: InputData?) throws -> Frequencies {
 
-  if let context = context {
-    if let inputData = inputData {
-      // use context and input to compute the frequencies
+    if let context = context {
+        if let inputData = inputData {
+            // use context and input to compute the frequencies
 
-      return frequencies
+            return frequencies
+        } else {
+            throw FFTError.noInputData
+        }
     } else {
-      throw FFTError.noInputData
+        throw FFTError.noContext
     }
-  } else {
-    throw FFTError.noContext
-  }
 }
 ```
 
@@ -906,7 +820,7 @@ When multiple optionals are unwrapped either with `guard` or `if let`, minimize 
 guard let number1 = number1,
       let number2 = number2,
       let number3 = number3 else {
-  fatalError("impossible")
+    fatalError("impossible")
 }
 // do something with numbers
 ```
@@ -914,17 +828,17 @@ guard let number1 = number1,
 **Not Preferred:**
 ```swift
 if let number1 = number1 {
-  if let number2 = number2 {
-    if let number3 = number3 {
-      // do something with numbers
+    if let number2 = number2 {
+        if let number3 = number3 {
+            // do something with numbers
+        } else {
+            fatalError("impossible")
+        }
     } else {
-      fatalError("impossible")
+        fatalError("impossible")
     }
-  } else {
-    fatalError("impossible")
-  }
 } else {
-  fatalError("impossible")
+    fatalError("impossible")
 }
 ```
 
@@ -934,7 +848,7 @@ Guard statements are required to exit in some way. Generally, this should be sim
 
 ### Switch Statements
 
-When at all possible, avoid using the `default` clause in `switch` statements, instead prefer to explicitly enumerate the unexpected conditions. This is especially true with `enum` data types. The rationale being if a new `case` is added to an `enum`, we want the compiler to generate an error informing us of the unhandled case. If we used a `default` clause, the new case would fall through to that clause and that default action may not be how that case should be handled.
+When at all possible, avoid using the `default` clause in `switch` statements, instead prefer to explicitly enumerate the unexpected conditions. This is especially true with `enum` data types. The rationale being if a new `case` is added to an `enum`, we want the compiler to generate an error informing us of the unhandled case. If we used a `default` clause, the new case would fall through to that clause and that default action may not be how that case should be handled. Reasonable exceptions include test-only code where handling many cases outside of the test at hand will never execute and add little value. Use in application code should have a comment explaining why so the next developer can decide if more explicit handling becomes warranted.
 
 **Preferred:**
 ```swift
@@ -944,7 +858,7 @@ case west:
 case north,
      south,
      east:
-    print("Go somehere else!")
+    print("Go somewhere else!")
 }
 ```
 
@@ -959,7 +873,7 @@ default:
 
 ```
 
-A more complex exmaple may illustrate the rationale more clearly. Take the case of conforming to `Equatable`:
+A more complex example may illustrate the rationale more clearly. Take the case of conforming to `Equatable`:
 
 ```swift
 public static func == (lhs: Direction, rhs: Direction) -> Bool {
@@ -984,97 +898,10 @@ Were we to add a new cases for in between directions (e.g. `northEast`) and we r
 Using the `default` clause may be acceptable when switching over other data types.
 
 
-## Thread Safety Using `mt_` Hungarian Notation
-Operations that affect the UI should be run on the main thread. Failing to obey this rule results in undefined behavior and untraceable bugs. To mitigate this issue, we use the `mt_` (short for `main thread`) prefix to indicate that something must be accessed from the main thread.
-
-For more details, read our [wiki article](https://wiki.doximity.com/articles/the-mt_-convention-hungarian-notation-for-thread-safe-code) on the `mt_` convention.
-
-### Overview
-There are 3 ways in which an `mt_` operation may be carried out:
-
-1. An `mt_` operation can be directly called by any `mt_` function
-2. An `mt` operation can be directly called by another function that is guaranteed to run on the main thread. Examples of functions that are guaranteed to run on the main thread are lifecycle functions like `viewDidLoad`, and `IBAction`s, which should be named accordingly: e.g., `mt_didTapExitButton`
-3. An `mt` operation can be called from a non-`mt` function, as long as you wrap it in a main-thread dispatch closure.
-
-### Functions
-A function which must be executed on the main thread must begin with the prefix `mt_`.
-
-```swift
-override func viewDidLoad() {
-   super.viewDidLoad()
-
-   // `viewDidLoad` is guaranteed to run on the main thread
-   // So we can call `mt_updateUIBasedOnCurrentUser` directly
-   mt_updateUIBasedOnCurrentUser()
-}
-
-func mt_presentNewUserFetchedAlert() {
-   // We must name this method with `mt` because UI work takes place inside of it
-
-   let alert = UIAlertController(title: "New User Fetched!",
-                                 message: nil,
-                                 preferredStyle: UIAlertControllerStyle.alert)
-
-   presentViewController(alert, animated: true)
-}
-
-func updateCurrentUser(notification: Notification) {
-   if let newCurrentUser = notification.payload as? User {
-
-      // Since `updateCurrentUser` is not guaranteed to be called on the main thread,
-      // We must dispatch onto the main thread before calling `mt_` functions.
-      DispatchQueue.main.async{ 
-         mtSet_currentUser = newCurrentUser
-         mt_presentNewUserFetchedAlert()
-      }
-   }
-}
-```
-
-### Properties
-Properties can be both read and written to, which are 2 separate operations.
-- If a property must be **read** on the main thread, use `mtGet_` as the prefix.
-- If a property must be **set** on the main thread, use `mtSet_` as the prefix.
-- If a property must be **read and set** on the main thread, use `mt_` as the prefix.
-
-In the example below, since this is the `didSet` of an `mtSet` variable, we are guaranteed to be on the main thread. Therefore, we can directly call `mt_` functions.
-     
-```swift
-var mtSet_currentUser: User? {
-   didSet {
-      mt_updateUIBasedOnCurrentUser()
-   }
-}
-```
-
-### Closures
-If a closure must be **called** on the main thread, use `mtCall_` as the prefix. For `mtCall_` closures, always use named parameters instead of using trailing closure syntax.
-
-```swift
-func checkUserStatus(mtCall_success: () -> ()) {
-  // We are not inside of a `mt` function
-  // But the `mtCall_success` name indicates the closure must be called on the main thread
-  // So we must call the closure inside of a main-thread dispatch.
-  
-  DispatchQueue.main.async{ mtCall_success() }
-}
-
-override func viewDidLoad() {
-   super.viewDidLoad()
-
-   checkUserStatus(
-     mtCall_success: { // <- Don't use trailing-closure syntax
-                       // <- Instead, explicitly name the argument with `mt`
-         someLabel.text = "user status successfully set"
-     }
-   )
-}
-```
-
 ## Catching Errors with `gentlePreconditionFailure`
 Use `gentlePreconditionFailure` to catch instances where the app reaches an unexpected state.
 
-In development or test builds (`DEBUG` and `ADHOC` configurations), `gentlePreconditionFailure` behaves like `preconditionFailure` and triggers a crash. 
+In development or test builds (`DEBUG` and `ADHOC` configurations), `gentlePreconditionFailure` behaves like `preconditionFailure` and triggers a crash.
 
 In a production build (`RELEASE` configuration), `gentlePreconditionFailure` will log that an unexpected state was encountered, but will not crash. If your app expects a returned value where the unexpected state was encountered, `gentlePreconditionFailure` also allows you to provide a fallback return value.
 
@@ -1099,14 +926,14 @@ Parentheses around conditionals are not required and should be omitted.
 **Preferred:**
 ```swift
 if name == "Hello" {
-  print("World")
+    print("World")
 }
 ```
 
 **Not Preferred:**
 ```swift
 if (name == "Hello") {
-  print("World")
+    print("World")
 }
 ```
 
@@ -1121,4 +948,3 @@ let playerMark = (player == current) ? "X" : "O"
 
 * [The Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/)
 * [The Swift Programming Language](https://developer.apple.com/library/prerelease/ios/documentation/swift/conceptual/swift_programming_language/index.html)
-* [Doximity Wiki on `_mt` Convention](https://wiki.doximity.com/articles/the-mt_-convention-hungarian-notation-for-thread-safe-code)
